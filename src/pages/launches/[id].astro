@@ -1,0 +1,41 @@
+---
+import Layout from "../../layouts/Layout.astro"
+import { type Doc } from "src/types/api"
+import { getLaunches, getLaunchesById } from "../../services/spaceX"
+
+
+    const {id} = Astro.params
+
+    console.log({ id })
+
+    let launch
+    if(id) {
+    launch = await getLaunchesById({id})
+}
+
+    export async function getStaticPaths ()  {
+        const launches = await getLaunches()
+        return launches.map(launch => ({
+            params: {id: launch.id}
+        }))
+    }
+console.log(launch)
+
+const detailText: string = launch?.details ?? "No imformation" 
+
+---
+<Layout title=`Launch on ${id}`>
+<article>
+    <div class="flex p-4 justify-center"><img class="" src={launch?.links?.patch.small} alt={launch?.name}></div>
+    <div class="flex p-4 justify-center"><h2 class="text-4xl">Launch N {launch?.flight_number}</h2></div>
+    <div class="flex p-2 justify-center"><p
+    class:list={[
+        "text-lg",
+        {
+            "font-bold text-wrapped": "No information",
+        }
+    ]}
+    >{detailText}</p>
+</div>
+</article>
+</Layout>
